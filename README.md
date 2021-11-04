@@ -1,7 +1,7 @@
 # Table of contents
 - [Cloud computing with AWS](#cloud-computing-with-aws)
   * [1. What is cloud?](#1-what-is-cloud-)
-    + [1.1 The Six Benefits of Cloud Computing](#1.1-the-six-benefits-of-cloud-computing)
+    + [1.1 The Six Benefits of Cloud Computing](#11-the-six-benefits-of-cloud-computing)
   * [2. AWS Global Infrastructure](#2-aws-global-infrastructure)
     + [2.1 Here are a few examples of Region codes:](#21-here-are-a-few-examples-of-region-codes-)
     + [2.2 Choose the Right AWS Region](#22-choose-the-right-aws-region)
