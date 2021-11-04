@@ -1,3 +1,11 @@
+- [Cloud computing with AWS](#cloud-computing-with-aws)
+  * [What is cloud?](#what-is-cloud-)
+  * [The Six Benefits of Cloud Computing](#the-six-benefits-of-cloud-computing)
+  * [AWS Global Infrastructure](#aws-global-infrastructure)
+    + [Here are a few examples of Region codes:](#here-are-a-few-examples-of-region-codes-)
+    + [Choose the Right AWS Region](#choose-the-right-aws-region)
+  * [Availability Zones](#availability-zones)
+
 # Cloud computing with AWS
 
 ## What is cloud?
