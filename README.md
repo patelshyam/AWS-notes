@@ -32,14 +32,14 @@ Cloud computing is the on-demand delivery of IT resources over the internet with
 ## AWS Global Infrastructure 
 Regions are geographic locations worldwide where AWS hosts its data centers. AWS Regions are named after the location where they reside. For example, in the United States, there is a Region in Northern Virginia called the Northern Virginia Region and a Region in Oregon called the Oregon Region. There are Regions in Asia Pacific, Canada, Europe, the Middle East, and South America, and AWS continues to expand to meet the needs of its customers.
 
-### Here are a few examples of Region codes:
+### examples of Region codes:
 
 -   us-east-1: This is the first Region created in the east of the US. The geographical name for this Region is N. Virginia.
 -   ap-northeast-1: The first Region created in the northeast of Asia Pacific. The geographical name for this Region is Tokyo.
 
 AWS Regions are independent from one another. This means that your data is not replicated from one Region to another, without your explicit consent and authorization.
 
-### Choose the Right AWS Region
+### How to Choose the Right AWS Region?
 
 Consider four main aspects when deciding which AWS Region to host your applications and workloads: latency, price, service availability, and compliance.
  
