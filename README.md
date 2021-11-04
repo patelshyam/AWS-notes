@@ -1,3 +1,4 @@
+# Table of contents
 - [Cloud computing with AWS](#cloud-computing-with-aws)
   * [What is cloud?](#what-is-cloud-)
   * [The Six Benefits of Cloud Computing](#the-six-benefits-of-cloud-computing)
