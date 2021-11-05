@@ -25,6 +25,14 @@
     + [7.4 Use IAM Roles When Possible](#74-use-iam-roles-when-possible)
     + [7.5 Consider Using an Identity Provider](#75-consider-using-an-identity-provider)
     + [7.6 Consider AWS SSO](#76-consider-aws-sso)
+  * [8.  Networking on AWS](#8--networking-on-aws)
+    + [8.1 What Are IP Addresses?](#81-what-are-ip-addresses-)
+      - [8.1.1 What is IPV4 Notation?](#811-what-is-ipv4-notation-)
+    + [8.2 Use CIDR Notation](#82-use-cidr-notation)
+  * [9. VPC (Virtual private cloud)](#9-vpc--virtual-private-cloud-)
+    + [9.1 Create subnet](#91-create-subnet)
+    + [9.2 Gateways](#92-gateways)
+    + [9.3 Amazon VPC Routing and Security](#93-amazon-vpc-routing-and-security)
 # Cloud computing with AWS
 
 ## 1. What is cloud?
@@ -179,3 +187,110 @@ AWS SSO is an IdP that lets your users sign in to a user portal with a single se
 AWS SSO is similar to IAM, in that it offers a directory where you can create users, organize them in groups, and set permissions across those groups, and grant access to AWS resources. However, AWS SSO has some advantages over IAM. For example, if you’re using a third-party IdP, you can sync your users and groups to AWS SSO.
 
 This removes the burden of having to re-create users that already exist elsewhere, and it enables you to manage those users from your IdP. More importantly, AWS SSO separates the duties between your IdP and AWS, ensuring that your cloud access management is not inside or dependent on your IdP.
+
+## 8.  Networking on AWS
+Networking is how you connect computers around the world and allow them to communicate with one another. In this trail, you’ve already seen a few examples of networking. One is the AWS global infrastructure. AWS has created a network of resources using data centers, Availability Zones, and Regions.
+
+### 8.1 What Are IP Addresses?
+In order to properly route your messages to a location, you need an address. Just like each home has a mail address, each computer has an IP address. However, instead of using the combination of street, city, state, zip code, and country, the IP address uses a combination of bits, 0s and 1s.
+
+Here is an example of a 32-bit address in binary format:
+11000000 10101000 00000001 00011110
+
+#### 8.1.1 What is IPV4 Notation?
+Typically, you don’t see an IP address in this binary format. Instead, it’s converted into decimal format and noted as an Ipv4 address. 
+
+the 32 bits are grouped into groups of 8 bits, also called octets. Each of these groups is converted into decimal format separated by a period.
+
+11000000 10101000 00000001 00011110
+192           . 168          . 1                . 30
+
+In the end, this is what is called an Ipv4 address. This is important to know when trying to communicate to a single computer. But remember, you’re working with a network. This is where CIDR Notation comes in.
+
+
+### 8.2 Use CIDR Notation
+192.168.1.30 is a single IP address. If you wanted to express IP addresses between the range of 192.168.1.0 and 192.168.1.255, how can you do that?
+
+One way is by using Classless Inter-Domain Routing (CIDR) notation. CIDR notation is a compressed way of specifying a range of IP addresses. Specifying a range determines how many IP addresses are available to you.  
+
+CIDR notation looks like this: 192.168.1.0/24
+
+32 total bits subtracted by 24 fixed bits leaves 8 flexible bits. Each of these flexible bits can be either 0 or 1, because they are binary. That means you have two choices for each of the 8 bits, providing 256 IP addresses in that IP range.
+
+192.168.1 (Fixed) .0 (Flexiable)
+
+The higher the number after the /, the smaller the number of IP addresses in your network. For example, a range of 192.168.1.0/24 is smaller than 192.168.1.0/16. 
+
+When working with networks in the AWS Cloud, you choose your network size by using CIDR notation. In AWS, the smallest IP range you can have is /28, which provides you 16 IP addresses. The largest IP range you can have is a /16, which provides you with 65,536 IP addresses.
+
+## 9. VPC (Virtual private cloud)
+
+A VPC is an isolated network you create in the AWS cloud, similar to a traditional network in a data center. When you create a VPC, you need to choose three main things.
+
+1.  The name of your VPC.
+2.  A Region for your VPC to live in. Each VPC spans multiple Availability Zones within the Region you choose.
+3.  A IP range for your VPC in CIDR notation. This determines the size of your network. Each VPC can have up to four /16 IP ranges.
+
+### 9.1 Create subnet
+After you create your VPC, you need to create subnets inside of this network. Think of subnets as smaller networks inside your base network—or virtual area networks (VLANs) in a traditional, on-premises network. In an on-premises network, the typical use case for subnets is to isolate or optimize network traffic. In AWS, subnets are used for high availability and providing different connectivity options for your resources.
+
+The use of subnet is to provide diffrent access rules and provide a place to put an container
+When you create a subnet, you need to choose three settings.
+1.  The VPC you want your subnet to live in, in this case VPC (10.0.0.0/16).
+2.  The Availability Zone you want your subnet to live in, in this case AZ1.
+3.  A CIDR block for your subnet, which must be a subset of the VPC CIDR block, in this case 10.0.0.0/24.
+    
+When you launch an EC2 instance, you launch it inside a subnet, which will be located inside the Availability Zone you choose.
+
+**Reserved IPs** For AWS to configure your VPC appropriately, AWS reserves five IP addresses in each subnet. These IP addresses are used for routing, Domain Name System (DNS), and network management. For example, consider a VPC with the IP range 10.0.0.0/22. The VPC includes 1,024 total IP addresses. This is divided into four equal-sized subnets, each with a /24 IP range with 256 IP addresses. Out of each of those IP ranges, there are only 251 IP addresses that can be used because AWS reserves five.
+
+Since AWS reserves these five IP addresses, it can impact how you design your network. A common starting place for those who are new to the cloud is to create a VPC with a IP range of /16 and create subnets with a IP range of /24. This provides a large amount of IP addresses to work with at both the VPC and subnet level.
+
+![enter image description here](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/2xyjkGLySbGco5Bi8lmxkw_ad3d1b2c0a774f0e94c9279fbb6a9a73_IntroVPC_3.jpeg?expiry=1636243200000&hmac=v93IgZ2TkZwBEra-iB6b19oZREQKjcnG60NKdteGYyY)
+
+ ### 9.2 Gateways
+ **Internet Gateway** To enable internet connectivity for your VPC, you need to create an internet gateway. Think of this gateway as similar to a modem. Just as a modem connects your computer to the internet, the internet gateway connects your VPC to the internet. Unlike your modem at home, which sometimes goes down or offline, an internet gateway is highly available and scalable. After you create an internet gateway, you then need to attach it to your VPC.
+
+- Used for connecting internet to VPC
+
+**Virtual Private Gateway** A virtual private gateway allows you to connect your AWS VPC to another private network. Once you create and attach a VGW to a VPC, the gateway acts as anchor on the AWS side of the connection. On the other side of the connection, you’ll need to connect a customer gateway to the other private network. A customer gateway device is a physical device or software application on your side of the connection. Once you have both gateways, you can then establish an encrypted VPN connection between the two sides.
+
+- Used to connect on premice network to AWS VPC.
+
+### 9.3 Amazon VPC Routing and Security
+After creating IGW or VGW you need to specify route for access the particular resource otherwise by default the outside traffic will be not allowed for the internal resources to be used for that you need to create routes.
+
+**The Main Route Table**
+When you create a VPC, AWS creates a route table called the main route table. A route table contains a set of rules, called routes, that are used to determine where network traffic is directed. AWS assumes that when you create a new VPC with subnets, you want traffic to flow between them. Therefore, the default configuration of the main route table is to allow traffic between all subnets in the local network. Below is an example of a main route table:
+
+There are two main parts to this route table.
+
+- The destination, which is a range of IP addresses where you want your traffic to go. In the example of sending a letter, you need a destination to route the letter to the appropriate place. The same is true for routing traffic. In this case, the destination is the IP range of our VPC network.
+
+- The target, which is the connection through which to send the traffic. In this case, the traffic is routed through the local VPC network.
+
+**Custom route table**
+
+While the main route table controls the routing for your VPC, you may want to be more granular about how you route your traffic for specific subnets. For example, your application may consist of a frontend and a database. You can create separate subnets for these resources and provide different routes for each of them. 
+
+If you associate a custom route table with a subnet, the subnet will use it instead of the main route table. By default, each custom route table you create will have the local route already inside it, allowing communication to flow between all resources and subnets inside the VPC.
+
+![enter image description here](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/69m1UQ52QS6ZtVEOdsEuvg_6d98f06359fd4ce9bd3233180011cf7d_Screen-Shot-2021-01-19-at-1.24.00-PM.png?expiry=1636243200000&hmac=SYNRUv9OiwWrAUUQpTCQyHR2ll6gSwGBFKZqoxbbmI4)
+
+Any new VPC is isolated from the external traffic. Whenever we allow external traffic to our network, we need to create the traffic rules for internal security to keep the network secure.
+
+There are two mechenicams to create security rules for the Instances.
+1. **Network ACLs**
+Think of a network ACL as a firewall at the subnet level. A network ACL enables you to control what kind of traffic is allowed to enter or leave your subnet. You can configure this by setting up rules that define what you want to filter. Here’s an example.
+- Network ACL’s are considered stateless, so you need to include both the inbound and outbound ports used for the protocol. If you don’t include the outbound range, your server would respond but the traffic would never leave the subnet.
+
+2.  **Security Groups**
+The next layer of security is for your EC2 Instances. Here, you can create a firewall called a security group. The default configuration of a security group blocks all inbound traffic and allows all outbound traffic.
+You might be wondering: “Wouldn’t this block all EC2 instances from receiving the response of any customer requests?” Well, security groups are stateful, meaning they will remember if a connection is originally initiated by the EC2 instance or from the outside and temporarily allow traffic to respond without having to modify the inbound rules.
+If you want your EC2 instance to accept traffic from the internet, you’ll need to open up inbound ports. If you have a web server, you may need to accept HTTP and HTTPS requests to allow that type of traffic in through your security group. You can create an inbound rule that will allow port 80 (HTTP) and port 443 (HTTPS) .
+
+You learned in a previous unit that subnets can be used to segregate traffic between computers in your network. Security groups can be used to do the same thing. A common design pattern is organizing your resources into different groups and creating security groups for each to control network communication between them.
+
+![enter image description here](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/ZnKJspBYSOeyibKQWDjnYQ_6e94f0f1d04e4409a37ce7b5ada5c75b_SG2.jpeg?expiry=1636243200000&hmac=F-Pt67bQZt0rkRyfCwuG4tObWcs_mTyDnDgdsMP6QXM)
+
+This example allows you to define three tiers and isolate each tier with the security group rules you define. In this case, you only allow internet traffic to the web tier over HTTPS, Web Tier to Application Tier over HTTP, and Application tier to Database tier over MySQL. This is different from traditional on-premises environments, in which you isolate groups of resources via VLAN configuration. In AWS, security groups allow you to achieve the same isolation without tying it to your network.
